@@ -7,9 +7,7 @@
 #include <iomanip>
 #include <algorithm>
 
-// --- Fechas ---
 Fecha parseFecha(const std::string& fecha) {
-    // Formato esperado: D/M/AAAA o DD/MM/AAAA
     Fecha f{1,1,2000};
     char sep1='/', sep2='/';
     std::stringstream ss(fecha);
@@ -22,7 +20,6 @@ Fecha parseFecha(const std::string& fecha) {
 
 int calcularEdad(const std::string& fechaNacimiento) {
     Fecha f = parseFecha(fechaNacimiento);
-    // Fecha actual
     std::time_t t = std::time(nullptr);
     std::tm* now = std::localtime(&t);
     int anio = now->tm_year + 1900;
@@ -37,12 +34,10 @@ int calcularEdad(const std::string& fechaNacimiento) {
     return edad;
 }
 
-// --- Documento y calendario ---
 int ultimosDosDigitos(const std::string& id) {
     if (id.empty()) return 0;
-    // Tomar los últimos dos caracteres que sean dígitos
     int n = (int)id.size();
-    int d1 = -1, d0 = -1; // d1 = decenas, d0 = unidades
+    int d1 = -1, d0 = -1; 
     for (int i = n-1; i >= 0; --i) {
         if (id[i] >= '0' && id[i] <= '9') {
             if (d0 == -1) d0 = id[i] - '0';
@@ -50,12 +45,11 @@ int ultimosDosDigitos(const std::string& id) {
         }
     }
     if (d0 == -1) return 0;
-    if (d1 == -1) return d0; // solo 1 dígito
+    if (d1 == -1) return d0; 
     return d1*10 + d0;
 }
 
 char grupoCalendarioPorDosDigitos(int dosDigitos) {
-    // Segun parcial 2025: A 00-39, B 40-79, C 80-99
     if (dosDigitos <= 39) return 'A';
     if (dosDigitos <= 79) return 'B';
     return 'C';
@@ -64,7 +58,7 @@ char grupoCalendarioPorDosDigitos(int dosDigitos) {
 std::string etiquetaRango20(int d) {
     if (d < 0) d = 0;
     if (d > 99) d = 99;
-    int base = (d/20)*20;           // 0,20,40,60,80
+    int base = (d/20)*20;          
     int to   = std::min(base+19,99);
     std::ostringstream oss;
     oss << std::setw(2) << std::setfill('0') << base << "-" 
@@ -72,14 +66,12 @@ std::string etiquetaRango20(int d) {
     return oss.str();
 }
 
-// --- Memoria (Linux /proc) ---
 size_t memoriaRSS_MB() {
     std::ifstream in("/proc/self/status");
     if (!in.is_open()) return 0;
     std::string line;
     while (std::getline(in, line)) {
-        if (line.rfind("VmRSS:", 0) == 0) { // empieza con VmRSS:
-            // Ejemplo: "VmRSS:	  123456 kB"
+        if (line.rfind("VmRSS:", 0) == 0) {
             std::istringstream ss(line);
             std::string key, kbStr, unit;
             size_t kb = 0;
@@ -90,7 +82,6 @@ size_t memoriaRSS_MB() {
     return 0;
 }
 
-// --- CSV ---
 static void escribirCabecera(std::ofstream& out) {
     out << "id,nombre,apellido,ciudad,fecha,ingresos,patrimonio,deudas,declarante\n";
 }
@@ -136,7 +127,6 @@ void exportarCSV(const std::vector<Persona*>& v, const std::string& ruta) {
     }
 }
 
-// --- Struct "C" ---
 struct PersonaC {
     char nombre[64];
     char apellido[64];
@@ -155,7 +145,6 @@ void exportarCSV(const std::vector<PersonaC>& v, const std::string& ruta) {
     }
     escribirCabecera(out);
     for (const auto& p : v) {
-        // Reconstruir fecha como D/M/A
         std::ostringstream f;
         f << p.dia << "/" << p.mes << "/" << p.anio;
         out << p.id << ","

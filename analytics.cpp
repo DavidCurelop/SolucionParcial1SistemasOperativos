@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <sstream>
 
-// Helpers comunes
 static char grupoDeID(const std::string& id) {
     int d = ultimosDosDigitos(id);
     return grupoCalendarioPorDosDigitos(d);
@@ -24,11 +23,9 @@ static void imprimirPersonaMinima(const Persona* p, const std::string& pref) {
               << " | patr: " << p->getPatrimonio() << "\n";
 }
 
-// --- CLASE: valores ---
 void preguntasObligatorias(const std::vector<Persona>& v) {
     if (v.empty()) { std::cout << "No hay datos.\n"; return; }
 
-    // 1. Persona más longeva (global y por ciudad)
     const Persona* masLongeva = nullptr;
     std::unordered_map<std::string,const Persona*> longevaPorCiudad;
 
@@ -50,7 +47,6 @@ void preguntasObligatorias(const std::vector<Persona>& v) {
         imprimirPersonaMinima(kv.second, "   " + kv.first + ": ");
     }
 
-    // 2. Mayor patrimonio (país, por ciudad, por grupo)
     const Persona* masRica = nullptr;
     std::unordered_map<std::string,const Persona*> ricaPorCiudad;
     std::unordered_map<char,const Persona*> ricaPorGrupo;
@@ -81,10 +77,9 @@ void preguntasObligatorias(const std::vector<Persona>& v) {
         imprimirPersonaMinima(kv.second, pref);
     }
 
-    // 3. Declarantes por calendario. Validar asignación según dos dígitos
-    std::map<char,int> conteoGrupo; // A,B,C
-    std::map<char,int> declarantesGrupo; // solo p.getDeclaranteRenta()==true
-    bool todoValido = true; // aquí validamos que el grupo calculado cae en A,B,C (siempre debería)
+    std::map<char,int> conteoGrupo; 
+    std::map<char,int> declarantesGrupo; 
+    bool todoValido = true; 
     for (const auto& p : v) {
         char g = grupoDeID(p.getId());
         if (g!='A' && g!='B' && g!='C') todoValido = false;
@@ -103,7 +98,6 @@ void preguntasObligatorias(const std::vector<Persona>& v) {
 void preguntasOpcionales(const std::vector<Persona>& v) {
     if (v.empty()) return;
 
-    // a) Ciudad con mayor número de personas
     std::unordered_map<std::string,int> cuentaCiudad;
     for (const auto& p : v) cuentaCiudad[p.getCiudadNacimiento()]++;
     std::string mayorCiudad = "N/A";
@@ -113,7 +107,6 @@ void preguntasOpcionales(const std::vector<Persona>& v) {
     }
     std::cout << "\n[Extra 1] Ciudad con más personas: " << mayorCiudad << " (" << maxCant << ")\n";
 
-    // b) Menores de 18 total y por ciudad
     int menoresTotal = 0;
     std::unordered_map<std::string,int> menoresCiudad;
     for (const auto& p : v) {
@@ -127,7 +120,6 @@ void preguntasOpcionales(const std::vector<Persona>& v) {
         std::cout << "   " << kv.first << ": " << kv.second << "\n";
     }
 
-    // c) Rango 20 más frecuente según terminación del documento
     std::unordered_map<std::string,int> conteoRangos;
     for (const auto& p : v) {
         int d = ultimosDosDigitos(p.getId());
@@ -139,7 +131,6 @@ void preguntasOpcionales(const std::vector<Persona>& v) {
     std::cout << "[Extra 3] Rango de documento más frecuente: " << mejor << " (" << best << ")\n";
 }
 
-// --- CLASE: punteros ---
 void preguntasObligatorias(const std::vector<Persona*>& v) {
     if (v.empty()) { std::cout << "No hay datos.\n"; return; }
 
@@ -226,7 +217,6 @@ void preguntasOpcionales(const std::vector<Persona*>& v) {
     std::cout << "[Extra 3] Rango de documento más frecuente: " << mejor << " (" << best << ")\n";
 }
 
-// --- STRUCT C: valores ---
 static void imprimirPersonaC(const PersonaC* p, const std::string& pref) {
     if (!p) return;
     std::cout << pref << " [" << p->id << "] " << p->nombre << " " << p->apellido
@@ -240,7 +230,6 @@ static int edadC(const PersonaC& p) {
 }
 
 static char grupoC(const PersonaC& p) {
-    // Tomar últimos dos dígitos de p.id (string estilo C)
     std::string sid(p.id);
     return grupoCalendarioPorDosDigitos(ultimosDosDigitos(sid));
 }
@@ -313,7 +302,6 @@ void preguntasOpcionalesC(const std::vector<PersonaC>& v) {
     std::cout << "[Extra 3] Rango de documento más frecuente: " << mejor << " (" << best << ")\n";
 }
 
-// --- STRUCT C: punteros ---
 void preguntasObligatoriasC(const std::vector<PersonaC*>& v) {
     if (v.empty()) { std::cout << "No hay datos.\n"; return; }
 

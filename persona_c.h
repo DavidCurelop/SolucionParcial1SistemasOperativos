@@ -2,7 +2,6 @@
 #ifndef PERSONA_C_H
 #define PERSONA_C_H
 
-// Implementación estilo C (struct) para comparar con class
 struct PersonaC {
     char nombre[64];
     char apellido[64];
@@ -13,4 +12,4 @@ struct PersonaC {
     bool declarante;
 };
 
-#endif // PERSONA_C_H
+#endif 
