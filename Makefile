@@ -1,7 +1,3 @@
-
-# Makefile simple para Linux (g++)
-# Compila el proyecto del Parcial 1
-
 CXX = g++
 CXXFLAGS = -O2 -std=c++17 -Wall -Wextra
 
